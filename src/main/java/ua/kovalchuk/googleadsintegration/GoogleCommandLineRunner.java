@@ -3,6 +3,7 @@ package ua.kovalchuk.googleadsintegration;
 import com.google.ads.googleads.lib.GoogleAdsClient;
 import com.google.ads.googleads.v10.services.GoogleAdsRow;
 import com.google.ads.googleads.v10.services.GoogleAdsServiceClient;
+import com.google.ads.googleads.v10.services.GoogleAdsServiceClient.SearchPagedResponse;
 import com.google.ads.googleads.v10.services.SearchGoogleAdsRequest;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class GoogleCommandLineRunner implements CommandLineRunner {
 
     private static final String ADS_PROPERTIES_PATH = "ads.properties";
-    private static final String NEW_METRIC_QUERY2 = "SELECT metrics.biddable_app_install_conversions, asset.name, asset.id, campaign.id, campaign.name, ad_group.campaign, segments.date FROM ad_group_ad_asset_view WHERE asset.id = 10067150534 AND segments.date = '2022-04-23'";
+    private static final String QUERY = "SELECT metrics.biddable_app_install_conversions, asset.name, asset.id, campaign.id, campaign.name, ad_group.campaign, segments.date FROM ad_group_ad_asset_view WHERE asset.id = 10067150534 AND segments.date = '2022-04-23'";
 
     @Override
     public void run(String... args) {
@@ -31,7 +32,7 @@ public class GoogleCommandLineRunner implements CommandLineRunner {
             .fromProperties(properties)
             .build();
 
-        runExample(googleAdsClient);
+        search(googleAdsClient);
     }
 
     @SneakyThrows
@@ -42,13 +43,13 @@ public class GoogleCommandLineRunner implements CommandLineRunner {
         return properties;
     }
 
-    private void runExample(GoogleAdsClient googleAdsClient) {
+    private void search(GoogleAdsClient googleAdsClient) {
         try (GoogleAdsServiceClient googleAdsServiceClient = googleAdsClient.getVersion10().createGoogleAdsServiceClient()) {
             SearchGoogleAdsRequest request = SearchGoogleAdsRequest.newBuilder()
                 .setCustomerId(Long.toString(7959147474L))
-                .setQuery(NEW_METRIC_QUERY2)
+                .setQuery(QUERY)
                 .build();
-            GoogleAdsServiceClient.SearchPagedResponse searchPagedResponse = googleAdsServiceClient.search(request);
+            SearchPagedResponse searchPagedResponse = googleAdsServiceClient.search(request);
 
             Collection<GoogleAdsRow> rows = getAllAdsRows(searchPagedResponse);
             if (rows.isEmpty()) {
@@ -64,9 +65,8 @@ public class GoogleCommandLineRunner implements CommandLineRunner {
         }
     }
 
-    private Collection<GoogleAdsRow> getAllAdsRows(final GoogleAdsServiceClient.SearchPagedResponse response) {
-        log.info("Getting all Ads rows from the response: {}", response);
-        final Collection<GoogleAdsRow> googleAdsRows = new ArrayList<>();
+    private Collection<GoogleAdsRow> getAllAdsRows(SearchPagedResponse response) {
+        Collection<GoogleAdsRow> googleAdsRows = new ArrayList<>();
         response.iterateAll().forEach(googleAdsRows::add);
         return googleAdsRows;
     }
