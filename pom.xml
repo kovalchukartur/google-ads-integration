@@ -32,6 +32,11 @@
             <artifactId>lombok</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.api-ads</groupId>
+            <artifactId>google-ads</artifactId>
+            <version>18.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
