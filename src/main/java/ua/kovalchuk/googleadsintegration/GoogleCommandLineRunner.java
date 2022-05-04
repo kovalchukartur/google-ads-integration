@@ -55,6 +55,11 @@ public class GoogleCommandLineRunner implements CommandLineRunner {
                 log.info("❌ Not found");
             } else {
                 log.info("☀️ Found {} rows", rows.size());
+
+                rows.forEach(row -> {
+                    log.info("Row = \n {}", row.toString());
+                    log.info("Metric = {}", row.getMetrics().getBiddableAppInstallConversions());
+                });
             }
         }
     }
