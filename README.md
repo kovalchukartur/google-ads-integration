@@ -18,3 +18,13 @@ Caused by: com.google.ads.googleads.v10.errors.GoogleAdsException: errors {
   message: "The customer can\'t be used because it isn\'t enabled."
 }
 ```
+
+
+```
+Caused by: com.google.ads.googleads.v9.errors.GoogleAdsException: errors {
+  error_code {
+    query_error: UNRECOGNIZED_FIELD
+  }
+  message: "Unrecognized field in the query: \'metrics.biddable_app_install_conversions\'."
+}
+```

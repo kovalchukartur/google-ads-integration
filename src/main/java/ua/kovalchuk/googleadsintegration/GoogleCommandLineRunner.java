@@ -1,13 +1,10 @@
 package ua.kovalchuk.googleadsintegration;
 
 import com.google.ads.googleads.lib.GoogleAdsClient;
-//import com.google.ads.googleads.v10.services.GoogleAdsRow;
-//import com.google.ads.googleads.v10.services.GoogleAdsServiceClient.SearchPagedResponse;
+import com.google.ads.googleads.v10.services.GoogleAdsRow;
+import com.google.ads.googleads.v10.services.GoogleAdsServiceClient;
 import com.google.ads.googleads.v10.services.SearchGoogleAdsRequest;
-//import com.google.ads.googleads.v10.services.SearchGoogleAdsResponse;
-import com.google.ads.googleads.v9.services.GoogleAdsRow;
-import com.google.ads.googleads.v9.services.GoogleAdsServiceClient;
-import com.google.ads.googleads.v9.services.SearchGoogleAdsResponse;
+import com.google.ads.googleads.v10.services.SearchGoogleAdsResponse;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,19 +22,8 @@ public class GoogleCommandLineRunner implements CommandLineRunner {
 
     private static final int PAGE_SIZE = 100;
     private static final String ADS_PROPERTIES_PATH = "ads.properties";
-    // 3070278717 -
-    // 4318958800 -
-    // 9122208542 +
-    // 6985616895 -
-    // 7959147474 ?
 
     public static final String SELECT_METRICS = "SELECT ad_group_ad_asset_view.asset FROM ad_group_ad_asset_view";
-    // 9698763824 3278187245 8830760741 6356221986 9672356800 6514451218
-    // 2871536275 3415456598 7271089169 6922822425 9069378135 8267743739
-    // 7959147474 2621041619 8251777820 7697258431 4044324766 6183556839
-    // 6658130250 5506971650 3661899537 8527590557 2203417545 5311939122
-    // 4288141394
-    private static final long CUSTOMER_ID = 9122208542L; // account id
     private static final String SELECT_CAMPAIGNS_SETTINGS_QUERY =
         "SELECT " +
             "campaign.id  " +
@@ -46,6 +32,12 @@ public class GoogleCommandLineRunner implements CommandLineRunner {
     private static final String ASSETS_QUERY = "SELECT asset.name, asset.youtube_video_asset.youtube_video_id, asset.type " +
         "FROM ad_group_ad_asset_view " +
         "WHERE asset.type IN ('IMAGE','YOUTUBE_VIDEO')";
+
+
+    // SELECT metrics.biddable_app_install_conversions, asset.name, asset.id FROM ad_group_ad_asset_view WHERE asset.id = 10067150534 AND campaign.name = 'SGH_UA_FiB_UAC_And_US_tCPA_Level20D1_All_010921_DAU_T1Boost'
+    private static final String NEW_METRIC_QUERY2 = "SELECT metrics.biddable_app_install_conversions, asset.name, asset.id, campaign.id, campaign.name, ad_group.campaign, segments.date FROM ad_group_ad_asset_view WHERE asset.id = 10067150534 AND segments.date = '2022-04-23' "
+//        "WHERE asset.id = 10067150534 AND campaign.name = 'SGH_UA_FiB_UAC_And_US_tCPA_Level20D1_All_010921_DAU_T1Boost'"
+        ;
 
     @Override
     public void run(String... args) throws Exception {
@@ -64,7 +56,19 @@ public class GoogleCommandLineRunner implements CommandLineRunner {
 //            6658130250L, 5506971650L, 3661899537L, 8527590557L, 2203417545L, 5311939122L,
 //            4288141394L);
 
-        List<Long> ids = List.of(8267743739L);
+        // 3070278717 -
+        // 4318958800 -
+        // 9122208542 +
+        // 6985616895 -
+        // 7959147474 ?
+
+        List<Long> ids = List.of(
+//            3070278717L,
+//            4318958800L,
+            9122208542L,
+//            6985616895L,
+            7959147474L
+        );
 
         ids.forEach(id -> runExample(googleAdsClient, id));
     }
@@ -78,12 +82,12 @@ public class GoogleCommandLineRunner implements CommandLineRunner {
     }
 
     private void runExample(GoogleAdsClient googleAdsClient, long customerId) {
-        try (com.google.ads.googleads.v9.services.GoogleAdsServiceClient googleAdsServiceClient = googleAdsClient.getVersion9().createGoogleAdsServiceClient()) {
+        try (GoogleAdsServiceClient googleAdsServiceClient = googleAdsClient.getVersion10().createGoogleAdsServiceClient()) {
             // Creates a request that will retrieve all campaign labels with the specified
             // labelId using pages of the specified page size.
-            com.google.ads.googleads.v9.services.SearchGoogleAdsRequest request = com.google.ads.googleads.v9.services.SearchGoogleAdsRequest.newBuilder()
+            SearchGoogleAdsRequest request = SearchGoogleAdsRequest.newBuilder()
                 .setCustomerId(Long.toString(customerId))
-                .setQuery(ASSETS_QUERY)
+                .setQuery(NEW_METRIC_QUERY2)
                 .build();
             // Issues the search request.
             GoogleAdsServiceClient.SearchPagedResponse searchPagedResponse = googleAdsServiceClient.search(request);
